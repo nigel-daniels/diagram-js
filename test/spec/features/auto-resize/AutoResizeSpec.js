@@ -783,4 +783,52 @@ describe('features/auto-resize', function() {
     expect(getOffsetSpy).to.have.been.calledWith(parentShape);
   }));
 
+
+  describe('hints', function() {
+
+    describe('autoResize', function() {
+
+      it('on move <ne>', inject(function(modeling, autoResize) {
+
+        // given
+        var resizeSpy = spy(autoResize, 'resize');
+
+        // when
+        modeling.moveElements([ childShape1 ], { x: -100, y: -100 }, parentShape);
+
+        // then
+        expect(getHints(resizeSpy)).to.exist;
+        expect(getHints(resizeSpy)).to.eql({
+          autoResize: 'ne'
+        });
+      }));
+
+
+      it('on resize child shape <nwse>', inject(function(modeling, autoResize) {
+
+        // given
+        var resizeSpy = spy(autoResize, 'resize');
+
+        var newBounds = { x: 0, y: 0, width: 500, height: 500 };
+
+        // when
+        modeling.resizeShape(childShape1, newBounds);
+
+        // then
+        expect(getHints(resizeSpy)).to.exist;
+        expect(getHints(resizeSpy)).to.eql({
+          autoResize: 'nwse'
+        });
+      }));
+
+    });
+
+  });
+
 });
+
+// helpers //////////
+
+function getHints(spy) {
+  return spy.getCall(0).lastArg;
+}
